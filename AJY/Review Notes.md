@@ -200,3 +200,222 @@ a - b + 1 = 5 - 3 + 1 = 3
 $$
 
 ---
+
+# 배수만들기
+
+### 알고리즘
+
+## **알고리즘 단계**
+
+1. **정렬 및 조합 생성**
+    - 주어진 정수들을 내림차순으로 정렬하여 가장 큰 수를 만들 수 있도록 합니다.
+        
+        ```
+                        int temp = digits[j];
+                        digits[j] = digits[j + 1];
+                        digits[j + 1] = temp;
+        
+        ```
+        
+        - Array.sort() 되나?
+    - 0을 제외한 나머지 정수들을 조합하여 가능한 모든 순열을 생성합니다.
+        - digits[0] == 0
+2. **3의 배수 확인**
+    - 각 순열의 합이 3의 배수인지 확인합니다. 3의 배수라면, 각 자리 수의 합이 3의 배수여야 합니다.
+        - totalSum % 3 != 0
+        - totalSum += digits[i]
+3. **100의 배수 확인**
+    - 각 순열의 마지막 두 자리가 00이거나 100의 배수인지 확인합니다.
+        - digits[i] == 0, zeroCount++
+4. **300의 배수 생성**
+    - 3의 배수이고 100의 배수인 경우, 해당 순열을 사용하여 가장 큰 300의 배수를 생성합니다.
+5. **결과 출력**
+    - 생성된 300의 배수가 가장 크면 이를 출력합니다. 만약 300의 배수를 만들 수 없다면 -1을 출력합니다.
+
+# 커트라인 정하기
+
+```java
+ int minScore = IntStream.of(scores).min().orElse(0);
+```
+
+- 점수의 최솟값을 구해 조건을 만족하지 못할 경우 출력용 기본값 설정
+- 예: [20, 30, 100] -> 20
+- `IntStream`은 Java에서 **기본형 `int` 값들을 처리하는 스트림(Stream)** 입니다.
+- `Stream<Integer>`는 래퍼 클래스(Integer)를 사용하지만,
+    
+    `IntStream`은 기본형(int)을 직접 다루기 때문에 **성능적으로 더 효율적**입니다.
+    
+
+| 메서드 | 설명 |
+| --- | --- |
+| `.of(int...)` | int 배열 또는 값들로 IntStream 생성 |
+| `.min()` | 최솟값 (OptionalInt로 반환됨) |
+| `.max()` | 최댓값 (OptionalInt로 반환됨) |
+| `.sum()` | 합계 |
+| `.average()` | 평균 (OptionalDouble로 반환됨) |
+| `.filter()` | 조건에 맞는 값만 추출 |
+| `.map()` | 각 값을 변형 |
+| `.forEach()` | 각 요소에 대해 작업 수행 |
+
+## 🎯 `orElse()`란?
+
+- `.min()`, `.average()` 등은 **Optional 객체**를 반환합니다.
+- 값이 없을 때 기본값을 주고 싶으면 `.orElse(기본값)` 사용!
+
+## ✅ Optional이란?
+
+- `Optional<T>`는 **"값이 있을 수도, 없을 수도 있다"** 는 것을 명시적으로 표현하는 객체입니다.
+- `null`을 직접 사용하는 대신 `Optional`을 사용하면 **NullPointerException을 방지**할 수 있습니다.
+- `T`는 제네릭 타입입니다. (`String`, `Integer`, `User`, ...)
+
+## ✅ 제네릭이란?
+
+- **제네릭(Generic)** 은 클래스나 메서드를 선언할 때 **타입을 파라미터처럼 일반화**해서 작성할 수 있게 하는 기능입니다.
+- 다양한 타입에 대해 **재사용 가능한 코드**를 만들 수 있습니다.
+
+## ✅ NullPointerException이란?
+
+- `NullPointerException`은 Java에서 **null 값을 참조하려고 할 때 발생하는 런타임 예외**입니다.
+- 가장 흔하게 발생하는 예외 중 하나로, **null 객체에 접근하거나 메서드를 호출할 때** 발생합니다.
+
+# **분수를 소수로**
+
+## ✅ `BigDecimal`을 사용한 정확한 분수 소수화 방법
+
+### 💡 목적
+
+Java에서 `double`이나 `float`을 사용할 경우 발생하는 **실수 오차 문제**를 해결하기 위해 `BigDecimal`을 사용하여 분수를 정확하게 소수로 변환한다.
+
+---
+
+### ✅ 핵심 요약
+
+| 항목 | 설명 |
+| --- | --- |
+| **정밀도 보장** | `BigDecimal`을 사용하면 부동소수점 오차 없이 정밀한 실수 연산 가능 |
+| **소수 자리 지정** | `divide(BigDecimal, int scale, RoundingMode)`를 사용하여 소수점 이하 자릿수를 정확히 지정하고 반올림 처리 가능 |
+| **일반 문자열 출력** | `toPlainString()`을 사용하면 과학적 표기법 없이 일반적인 소수 형태로 출력 |
+| **자동 패딩 처리** | 예: `0.320`처럼 소수점 이하 `n`자리까지 `0`을 포함한 정확한 출력 가능 |
+
+---
+
+### 🧪 예시 코드
+
+```java
+java
+복사편집
+BigDecimal p = new BigDecimal("10555");
+BigDecimal q = new BigDecimal("33000");
+int n = 3;
+
+BigDecimal result = p.divide(q, n, RoundingMode.HALF_UP);
+System.out.println(result.toPlainString());  // 출력: 0.320
+
+```
+
+---
+
+### 📌 참고 사항
+
+- `scale`은 소수점 이하 출력할 자릿수를 의미
+- `RoundingMode.HALF_UP`은 반올림 방식을 지정 (`5` 이상이면 올림)
+- 숫자가 매우 크거나 반복 소수일 경우에도 정확한 결과 제공
+
+# **문서 통계**
+
+### 📌 `String line = scanner.nextLine();`
+
+- **설명**: 한 줄 전체를 입력받을 때 사용
+- **특징**
+    - 공백 포함하여 한 줄 전체를 입력으로 받음
+    - `next()`는 공백 전까지만 읽기 때문에, **공백이 포함된 문장을 읽을 땐 `nextLine()`을 사용해야 함**
+- **예시**
+    
+    ```java
+    java
+    복사편집
+    Scanner scanner = new Scanner(System.in);
+    String line = scanner.nextLine(); // "Hello World" 입력 시 → "Hello World"
+    
+    ```
+    
+
+---
+
+### 📌 `replace(" ", "")`
+
+- **설명**: 문자열 내의 공백을 모두 제거
+- **사용 목적**: **공백을 제외한 글자 수 계산** 시 유용
+- **문법**
+    
+    ```java
+    java
+    복사편집
+    String noSpace = line.replace(" ", "");
+    
+    ```
+    
+- **예시**
+    
+    ```java
+    java
+    복사편집
+    String line = "Coding Masters";
+    String noSpace = line.replace(" ", ""); // "CodingMasters"
+    int length = noSpace.length(); // 13
+    
+    ```
+    
+
+---
+
+### 📌 `line.trim().split("\\s+")`
+
+- **설명**
+    - `trim()`은 문자열 양쪽 끝의 공백 제거
+    - `split("\\s+")`는 **하나 이상의 공백을 기준으로 문자열을 분리** (단어 단위로 나누기)
+- **사용 목적**: **단어 수를 정확하게 세기 위해 사용**
+- **정규표현식 `\\s+`**
+    - `\\s`는 공백 문자 (space, tab 등)
+    - `+`는 하나 이상
+- **예시**
+    
+    ```java
+    java
+    복사편집
+    String line = "A   B C";
+    String[] words = line.trim().split("\\s+"); // ["A", "B", "C"]
+    int wordCount = words.length; // 3
+    
+    ```
+    
+
+# 피보나치 피보나치 수열
+
+### 🔍 문제 설명
+
+- **피보나치 수열**: 1, 1, 2, 3, 5, 8, ...
+- **피보나치 피보나치 수열**: 피보나치 수열의 각 항을 그 수만큼 반복
+    - 예: 1, 1, 2, 2, 3, 3, 3, 5, 5, 5, 5, 5, ...
+
+> 주어진 정수 a와 b에 대해,
+> 
+> 
+> **피보나치 피보나치 수열의 a번째 항부터 b번째 항까지의 합을 구하는 프로그램**
+> 
+
+---
+
+### 💡 핵심 아이디어
+
+- 일반 피보나치 수를 `n`이라 할 때, `n`을 **`n`번 추가**하여 새로운 수열을 생성
+- 그 후 인덱스 `a`부터 `b`까지 합산
+
+### 📌 주요 포인트 설명
+
+| 포인트 | 설명 |
+| --- | --- |
+| `List<Integer> fib` | 피보나치 피보나치 수열을 저장할 리스트 |
+| `fib.add()` | 해당 피보나치 수를 그 수만큼 리스트에 추가 |
+| `fib.get(i)` | i번째 항의 값을 가져옴 |
+| `sum += fib.get(i)` | a~b 항까지의 합 계산 |
